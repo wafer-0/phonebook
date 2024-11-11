@@ -38,6 +38,10 @@ app.use(
 	)
 )
 
+app.get("/", (request, response) => {
+	response.send("<p>hello<p/>")
+})
+
 app.get("/api/persons", (request, response) => {
 	response.json(persons)
 })
@@ -96,7 +100,7 @@ app.get("/info", (request, response) => {
 	response.send(`<p>Phonebook has info for ${cnt} people</p><p>${time}</p>`)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`)
 })
