@@ -16,3 +16,20 @@ content-type: application/json
 {
 
 }
+
+###
+POST https://phonebook-wg9t.onrender.com/api/persons
+content-type: application/json
+
+{
+
+}
+
+###
+POST https://phonebook-wg9t.onrender.com/api/persons
+content-type: application/json
+
+{
+    "name": "potter",
+    "number": "123-456"
+}
