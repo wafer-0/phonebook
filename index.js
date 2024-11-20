@@ -4,7 +4,7 @@ const morgan = require("morgan")
 const cors = require("cors")
 const app = express()
 const Person = require("./models/person")
-const { default: persons } = require("../frontend/src/services/persons")
+// const { default: persons } = require("../frontend/src/services/persons")
 
 app.use(cors())
 app.use(express.json())
@@ -100,7 +100,7 @@ app.get("/info", (request, response) => {
 })
 
 const errorHandler = (error, request, response, next) => {
-	// console.error(error)
+	console.error(error)
 	if (error.name == "CastError") {
 		return response.status(400).send({ error: "malformatted id" })
 	} else if (error.name == "ValidationError") {
