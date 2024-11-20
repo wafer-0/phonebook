@@ -29,21 +29,26 @@ app.get("/api/persons", (request, response) => {
 })
 
 // mongodb data
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
 	const { name, number } = request.body
 	const person = new Person({
 		name: String(name),
 		number: String(number),
 	})
 
-	person.save().then((person) => {
-		console.log(`add ${person.name} ${person.number} to phonebook`)
-		response.json(person)
-	})
+	person
+		.save()
+		.then((person) => {
+			console.log(`add ${person.name} ${person.number} to phonebook`)
+			response.json(person)
+		})
+		.catch((error) => {
+			next(error)
+		})
 })
 
 // mongodb data
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
 	Person.findById(request.params.id)
 		.then((person) => {
 			if (person) {
@@ -53,17 +58,21 @@ app.get("/api/persons/:id", (request, response) => {
 			}
 		})
 		.catch((error) => {
-			console.log(error)
-			response.status(400).send({ error: "malformatted id" })
+			next(error)
 		})
 })
 
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
 	Person.findByIdAndUpdate(request.params.id, request.body, {
 		new: true,
-	}).then((updatePerson) => {
-		response.json(updatePerson)
+		runValidators: true,
 	})
+		.then((updatePerson) => {
+			response.json(updatePerson)
+		})
+		.catch((error) => {
+			next(error)
+		})
 })
 
 app.delete("/api/persons/:id", (request, response, next) => {
@@ -91,9 +100,11 @@ app.get("/info", (request, response) => {
 })
 
 const errorHandler = (error, request, response, next) => {
-	// console.error(error.name)
+	// console.error(error)
 	if (error.name == "CastError") {
 		return response.status(400).send({ error: "malformatted id" })
+	} else if (error.name == "ValidationError") {
+		return response.status(400).json({ error: error.message })
 	}
 	next(error)
 }
